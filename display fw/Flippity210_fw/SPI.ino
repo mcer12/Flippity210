@@ -108,7 +108,7 @@ void spi2WriteBytes(volatile byte *data) {
   digitalWrite(ROWS_LATCH, 1);
 }
 
-
+/*
 void ledsWriteBytes(volatile byte *data) {
 
 #ifdef USE_SPI
@@ -129,3 +129,4 @@ void ledsWriteBytes(volatile byte *data) {
   digitalWriteFast(LEDS_LATCH, 1);
 #endif
 }
+*/

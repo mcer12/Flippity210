@@ -32,21 +32,21 @@ void initLeds() {
   digitalWriteFast(LEDS_LATCH, false);
   digitalWriteFast(LEDS_CLK, false);
 
-
-
+/*
 #ifdef USE_SPI
   SPI.begin();
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE1);
   SPI.setClockDivider(SPI_CLOCK_DIV16);
 #endif
+*/
 
   ledsTimer.attachInterruptInterval(LEDS_INTERVAL_MICROS, ledsTimerHandler);
 
 }
 
 void toggleLeds(byte state) {
-  if (state == PAYLOAD_LED_PWR_ON) {
+  if (state == FLIPPITY210_LED_PWR_ON) {
     digitalWriteFast(LEDS_EN, false); // LEDs enable is inverted
   }
 }
