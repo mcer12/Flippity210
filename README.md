@@ -1,5 +1,5 @@
 # Flippity210
-Control board and library for BUSE 210 flip dot displays
+Control board and library for BUSE BS210 flip dot displays. Might also work with BS110 (non-led version)
 
 - This project enables you to control these beautiful flip-dot displays via I2C the same way you use I2C oled displays for example. 
 - The library supports Adafruit GFX which enables you to draw fonts and geometry.
