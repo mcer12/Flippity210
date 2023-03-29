@@ -1,3 +1,4 @@
+/*
 void setLocalPixel(int x, int y, bool value, int display) {
   bitWrite(dotsBuffer[display][y], x, value);
 }
@@ -7,39 +8,37 @@ void setPixel(int x, int y, bool value) {
   x = x % columnCount;
   setLocalPixel(x, y, value, displayNumber);
 }
-
-/*
-void blankDisplay(uint8_t dispNumber) {
+  void blankDisplay(uint8_t dispNumber) {
   for (int i = 0; i < rowCount; i++) {
     dotsBuffer[dispNumber][i] = 0;
   }
-}
+  }
 
-void fillDisplay(uint8_t dispNumber) {
+  void fillDisplay(uint8_t dispNumber) {
   for (int i = 0; i < rowCount; i++) {
     dotsBuffer[dispNumber][i] = UINT32_MAX;
   }
-}
+  }
 
-void invertDisplay(uint8_t dispNumber) {
+  void invertDisplay(uint8_t dispNumber) {
 
   for (int i = 0; i < rowCount; i++) {
     dotsBuffer[dispNumber][i] = ~dotsBuffer[dispNumber][i];
   }
 
-}
+  }
 
-void blankAll() {
-  for (int dispNumber; dispNumber < displaysLimit; dispNumber++) {
+  void blankAll() {
+  for (int dispNumber; dispNumber < displaysCount; dispNumber++) {
     for (int i = 0; i < rowCount; i++) {
       dotsBuffer[dispNumber][i] = 0;
     }
   }
-}
+  }
 */
 /*
   void fillAll() {
-  for (int dispNumber; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber; dispNumber < displaysCount; dispNumber++) {
     for (int i = 0; i < rowCount; i++) {
       dotsBuffer[dispNumber][i] = UINT32_MAX;
     }
@@ -47,7 +46,7 @@ void blankAll() {
   }
 
   void invertAll() {
-  for (int dispNumber; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber; dispNumber < displaysCount; dispNumber++) {
     for (int i = 0; i < rowCount; i++) {
       dotsBuffer[dispNumber][i] = ~dotsBuffer[dispNumber][i];
     }
@@ -113,7 +112,6 @@ void dotsSelectCol(uint8_t colNumber) {
 void dotsFlipCol(uint8_t dispNumber, uint8_t colNumber, bool forceChange) {
 
   dotsSelectCol(colNumber);
-
   digitalWriteFast(GROUP_ADDR_B0, 0); // 1 = 24V, 0 = GND
 
   for (int row = 0; row < rowCount; row++) {
@@ -178,7 +176,7 @@ void getNumPixelsToFlipUnflip() {
   dotsToFlipUnflip[0] = 0; // Dots to flip
   dotsToFlipUnflip[1] = 0; // Dots to unflip
 
-  for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
     for (int row = 0; row < rowCount; row++) {
       for (int colNumber = 0; colNumber < columnCount; colNumber++) {
         if (bitRead(dotsBuffer[dispNumber][row], colNumber) && bitRead(dotsBuffer[dispNumber][row], colNumber) != bitRead(dotsActive[dispNumber][row], colNumber)) {
@@ -200,7 +198,6 @@ void dissolveDots() {
   unsigned int iterator = 0;
   bool breakOuterLoop = false;
 
-
   digitalWriteFast(GROUP_ADDR_B0, 0); // 1 = 24V, 0 = GND
 
   for (int i = dotsToFlipUnflip[0]; i > 0; i--) {
@@ -208,7 +205,7 @@ void dissolveDots() {
     breakOuterLoop = false;
     iterator = 0;
 
-    for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
       if (breakOuterLoop) break;
 
       for (int row = 0; row < rowCount; row++) {
@@ -258,7 +255,7 @@ void dissolveDots() {
     breakOuterLoop = false;
     iterator = 0;
 
-    for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
 
       if (breakOuterLoop) break;
 
@@ -309,7 +306,7 @@ void dissolveDots() {
 void dotsFlipRow(uint8_t row, bool forceChange) {
   digitalWriteFast(GROUP_ADDR_B0, 0); // 1 = 24V, 0 = GND
 
-  for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
     dotsSelectDisplay(dispNumber);
 
     for (int colNumber = 0; colNumber < columnCount; colNumber++) {
@@ -339,7 +336,7 @@ void dotsFlipRow(uint8_t row, bool forceChange) {
 void dotsUnflipRow(uint8_t row, bool forceChange) {
   digitalWriteFast(GROUP_ADDR_B0, 1); // 1 = 24V, 0 = GND
 
-  for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
     dotsSelectDisplay(dispNumber);
 
     for (int colNumber = 0; colNumber < columnCount; colNumber++) {
@@ -384,29 +381,28 @@ void setDisplayStatus(byte busy) {
 }
 void setDisplaySpeed(byte speed) {
   displayData[1] = speed;
+  /*
+    if (speed == FLIPPITY210_SPEED_HIGH) {
+      flipDotUpdateDelay = 100;
+    }
+    else if (speed == FLIPPITY210_SPEED_MED) {
+      flipDotUpdateDelay = 1000;
+    }
+    else if (speed == FLIPPITY210_SPEED_LOW) {
+      flipDotUpdateDelay = 2000;
+    }
+    else if (speed == FLIPPITY210_SPEED_VERY_LOW) {
+      flipDotUpdateDelay = 4000;
+    }
+    else if (speed == FLIPPITY210_SPEED_EXTREMELY_LOW) {
+      flipDotUpdateDelay = 10000;
+    }
+    else if (speed == FLIPPITY210_SPEED_LOWEST) {
+      flipDotUpdateDelay = 20000;
+    }
+  */
+}
 
-  if (speed == FLIPPITY210_SPEED_HIGH) {
-    flipDotUpdateDelay = 100;
-  }
-  else if (speed == FLIPPITY210_SPEED_MED) {
-    flipDotUpdateDelay = 1000;
-  }
-  else if (speed == FLIPPITY210_SPEED_LOW) {
-    flipDotUpdateDelay = 2000;
-  }
-  else if (speed == FLIPPITY210_SPEED_VERY_LOW) {
-    flipDotUpdateDelay = 4000;
-  }
-  else if (speed == FLIPPITY210_SPEED_EXTREMELY_LOW) {
-    flipDotUpdateDelay = 10000;
-  }
-  else if (speed == FLIPPITY210_SPEED_LOWEST) {
-    flipDotUpdateDelay = 20000;
-  }
-}
-void setDisplayBri(byte bri) {
-  displayData[2] = bri;
-}
 void setDisplayAnimation(byte anim) {
   displayData[3] = anim;
 }
@@ -420,7 +416,7 @@ void refreshDisplays() {
 
   unsigned long millisUpdate = millis();
 #ifdef ENABLE_ONLY_DEFAULT_ANIMATION
-  for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
     dotsSelectDisplay(dispNumber);
     for (int col = 0; col < columnCount; col++) {
       updateCol(dispNumber, col, false);
@@ -428,15 +424,15 @@ void refreshDisplays() {
   }
 #else
   if (displayData[3] == FLIPPITY210_ANIM_SLIDE_RIGHT) {
-    for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
       dotsSelectDisplay(dispNumber);
       for (int col = 0; col < columnCount; col++) {
-        updateCol(dispNumber, col, true);
+        updateCol(dispNumber, col, false);
       }
     }
   }
   else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_RIGHT_FORCED) {
-    for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
       dotsSelectDisplay(dispNumber);
       for (int col = 0; col < columnCount; col++) {
         updateCol(dispNumber, col, true);
@@ -444,18 +440,18 @@ void refreshDisplays() {
     }
   }
   else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_LEFT) {
-    for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
-      dotsSelectDisplay(displaysLimit - 1 - dispNumber);
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
+      dotsSelectDisplay(displaysCount - 1 - dispNumber);
       for (int col = 0; col < columnCount; col++) {
-        updateCol(displaysLimit - 1 - dispNumber, columnCount - 1 - col, false);
+        updateCol(displaysCount - 1 - dispNumber, columnCount - 1 - col, false);
       }
     }
   }
   else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_LEFT_FORCED) {
-    for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
-      dotsSelectDisplay(displaysLimit - 1 - dispNumber);
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
+      dotsSelectDisplay(displaysCount - 1 - dispNumber);
       for (int col = 0; col < columnCount; col++) {
-        updateCol(displaysLimit - 1 - dispNumber, columnCount - 1 - col, true);
+        updateCol(displaysCount - 1 - dispNumber, columnCount - 1 - col, true);
       }
     }
   }
@@ -491,7 +487,7 @@ void refreshDisplays() {
   }
 #endif
 #endif
-  for (int dispNumber = 0; dispNumber < displaysLimit; dispNumber++) {
+  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
     dotsSelectDisplay(dispNumber);
     for (int i = 0; i < rowCount; i++) {
       dotsActive[dispNumber][i] = dotsBuffer[dispNumber][i];

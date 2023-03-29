@@ -1,6 +1,12 @@
 /*
 
   DISPLAY FIRMWARE
+  STM32F103C6T6 (32k flash): 
+  sketch uses 99% of memory with USB support disabled
+  STM32F103C8T6 (64k flash): 
+  sketch uses 51% of memory with USB support disabled
+  sketch uses 78% of memory with USB support & flashing via HID bootloader
+
 
   COMMANDS
 
@@ -38,8 +44,8 @@
   FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM_FORCED 0x09
 
   Leds power 0x26
-  0x10 - off
   0x11 - on
+  0x10 - off
 
   Data:
   3 bytes per display
@@ -55,8 +61,8 @@
 */
 //#define USE_SERIAL // eats alot of memory, use for debug
 #define ENABLE_DISSOLVE // ugly nested loops function to disolve dots, wont fit in STM32F103C6T6
-#define ENABLE_ONLY_DEFAULT_ANIMATION // saves alot of space
-#define DISPLAY_COUNT_LIMIT 4 // normally it's 4 but if you use STM32 with less flash memory, lowering can free some space
+//#define ENABLE_ONLY_DEFAULT_ANIMATION // saves alot of space
+#define DISPLAY_COUNT_LIMIT 4 // normally it's 4 but if you use STM32 with less flash memory, lowering can free tiny bit of space
 
 #ifndef USE_SERIAL
 #define TIMER_INTERRUPT_DEBUG 0
@@ -113,8 +119,10 @@
 #define LEDS_D6 PB_9
 #define LEDS_D7 PB_8
 
-#define DOTS_POWERON_TIME 600 // Microseconds. Sets time to keep each dot powered to flip correctly. 500uS or more.
-#define LEDS_INTERVAL_MICROS 300 // Microseconds. Speed of switching leds rows
+#define DOTS_POWERON_TIME 600 // Microseconds. Sets time to keep each dot powered to flip correctly. 500uS-1000uS, more will overheat the drivers! Recommended 500uS or more for 24V, 800uS or more for 12V
+#define LEDS_INTERVAL_MICROS_LOW_BRI 100 // Microseconds. Speed of switching leds rows
+#define LEDS_INTERVAL_MICROS_MED_BRI 155 // Microseconds. Speed of switching leds rows
+#define LEDS_INTERVAL_MICROS_HIGH_BRI 300 // Microseconds. Speed of switching leds rows
 
 #define I2C_ADDR 0x08
 
@@ -171,8 +179,7 @@ byte displayData[5] {
   FLIPPITY210_LED_PWR_OFF, // led power
 };
 
-uint8_t displaysLimit = 2; // maximum number of displays that can be daisychained
-uint8_t displaysToUpdate = 0;
+uint8_t displaysCount; // set by onboard jumper, with maximum of 4 displays. If you want to use more than 4 displays, edit toggleDaisyChainCount() function.
 
 // Flip dots vars
 const uint8_t registersCount = 7;
@@ -221,13 +228,14 @@ void setup() {
 
   pinMode(DAISY_A, INPUT_PULLUP);
   pinMode(DAISY_B, INPUT_PULLUP);
-  
-  toggleDaisyChainCount();
 
+  toggleDaisyChainCount(); // set the number of displays according to jumper selection
   initFlipDots(); // needs to be called first in setup
   initLeds();
 
   setDisplayStatus(FLIPPITY210_STATUS_BUSY);
+
+  //delay(100); // give ESP some time to boot
 
   i2cInit();
 
@@ -236,36 +244,15 @@ void setup() {
   Serial.println("Started");
   delay(10);
 #endif
-  // Initialize the display
-  /*
-      fillDisplay(0);
-      fillDisplay(1);
-      refreshDisplays();
-      delay(2000);
-      blankDisplay(0);
-      blankDisplay(1);
-      refreshDisplays();
-      delay(2000);
-  */
-  /*
-    for (int i = 0; i < 50; i++) {
-      fillDisplay(0);
-      fillDisplay(1);
-      refreshDisplays(true);
-      blankDisplay(0);
-      blankDisplay(1);
-      refreshDisplays(true);
-    }
-  */
 
-  toggleLeds(1);
+  // Initialize the display
+  //toggleLeds(FLIPPITY210_LED_PWR_ON); // LEDs off by default
   setDisplayStatus(FLIPPITY210_STATUS_READY);
+
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  //Serial.println("loop");
-  //delay(1);
 
   if (!receivingData && dataReady) {
     dataReady = false;

@@ -7,16 +7,19 @@ void toggleDaisyChainCount() {
   Serial.println(digitalRead(DAISY_B));
 #endif
 
-  if (digitalRead(DAISY_A) == 0 && digitalRead(DAISY_B) == 0) {
-    displaysLimit = 1;
+  bool daisyA = digitalRead(DAISY_A);
+  bool daisyB = digitalRead(DAISY_B);
+
+  if (daisyA && daisyB) {
+    displaysCount = 1;
   }
-  else if (digitalRead(DAISY_A) == 0 && digitalRead(DAISY_B) == 1) {
-    displaysLimit = 2;
+  else if (daisyA && !daisyB) {
+    displaysCount = 2;
   }
-  else if (digitalRead(DAISY_A) == 1 && digitalRead(DAISY_B) == 0) {
-    displaysLimit = 3;
+  else if (!daisyA && daisyB) {
+    displaysCount = 3;
   }
-  else if (digitalRead(DAISY_A) == 1 && digitalRead(DAISY_B) == 1) {
-    displaysLimit = 4;
+  else if (!daisyA && !daisyB) {
+    displaysCount = 4;
   }
 }

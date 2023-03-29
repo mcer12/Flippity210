@@ -16,8 +16,8 @@ void receiveEvent(int howMany)
 {
   int32_t bigNum;
   byte command;
-  byte wireBuffer[(displaysLimit * 4 * rowCount) + 1]; // command byte + 1 byte or 4 bytes per display
-  byte wireBufferFlipped[(displaysLimit * 4 * rowCount) + 1];
+  byte wireBuffer[(displaysCount * 4 * rowCount) + 1]; // command byte + 1 byte or 4 bytes per display
+  byte wireBufferFlipped[(displaysCount * 4 * rowCount) + 1];
   int currentDisplay = 0;
   int iterator = 0;
   receivingData = true;
@@ -41,7 +41,7 @@ void receiveEvent(int howMany)
     setDisplayBri(wireBuffer[1]);
   }
   if (wireBuffer[0] == FLIPPITY210_COMMAND_TOGGLE_LED_POWER) {
-    setDisplayBri(wireBuffer[1]);
+    toggleLeds(wireBuffer[1]);
   }
 
   if (wireBuffer[0] == FLIPPITY210_COMMAND_UPDATE_BOTH || wireBuffer[0] == FLIPPITY210_COMMAND_UPDATE_LEDS || wireBuffer[0] == FLIPPITY210_COMMAND_UPDATE_DOTS) {

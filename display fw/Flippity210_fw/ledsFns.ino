@@ -16,6 +16,7 @@ void initLeds() {
   pinMode(pinNametoDigitalPin(LEDS_LATCH), OUTPUT);
   pinMode(pinNametoDigitalPin(LEDS_CLK), OUTPUT);
 
+  digitalWriteFast(LEDS_EN, true); // LEDs enable is inverted
   digitalWriteFast(LEDS_ADD1, false);
   digitalWriteFast(LEDS_ADD2, false);
   digitalWriteFast(LEDS_A0, false);
@@ -32,23 +33,38 @@ void initLeds() {
   digitalWriteFast(LEDS_LATCH, false);
   digitalWriteFast(LEDS_CLK, false);
 
-/*
-#ifdef USE_SPI
-  SPI.begin();
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setDataMode(SPI_MODE1);
-  SPI.setClockDivider(SPI_CLOCK_DIV16);
-#endif
-*/
+  /*
+    #ifdef USE_SPI
+    SPI.begin();
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE1);
+    SPI.setClockDivider(SPI_CLOCK_DIV16);
+    #endif
+  */
 
-  ledsTimer.attachInterruptInterval(LEDS_INTERVAL_MICROS, ledsTimerHandler);
+  ledsTimer.attachInterruptInterval(LEDS_INTERVAL_MICROS_HIGH_BRI, ledsTimerHandler);
 
+}
+
+void setDisplayBri(byte bri) {
+  if (bri == FLIPPITY210_BRI_LOW) {
+    ledsTimer.setInterval(LEDS_INTERVAL_MICROS_LOW_BRI, ledsTimerHandler);
+  } else if (bri == FLIPPITY210_BRI_MED) {
+    ledsTimer.setInterval(LEDS_INTERVAL_MICROS_MED_BRI, ledsTimerHandler);
+  } else if (bri == FLIPPITY210_BRI_HIGH) {
+    ledsTimer.setInterval(LEDS_INTERVAL_MICROS_HIGH_BRI, ledsTimerHandler);
+  }
+
+  displayData[2] = bri;
 }
 
 void toggleLeds(byte state) {
   if (state == FLIPPITY210_LED_PWR_ON) {
     digitalWriteFast(LEDS_EN, false); // LEDs enable is inverted
+  } else {
+    digitalWriteFast(LEDS_EN, true); // LEDs enable is inverted
   }
+  displayData[4] = state;
 }
 
 void selectLedsRow(byte rowNumber) {
@@ -74,19 +90,13 @@ void selectLedsRow(byte rowNumber) {
 
 void ledsTimerHandler()
 {
-  /*
-      for (int i = 0; i < ledsRegistersCount; i++) { // reset all to zero because only one row can be flipped at a time!!!!! Otherwise magic smoke.
-        //shiftSetValue(bytesLeds, i, 1);
-        bytesLeds[0] = 1;
-      }
-  */
 
   toggle++;
   if (toggle > 1) toggle = 0;
 
   if (toggle == 0) {
 
-    for (int dispNumber; dispNumber < displaysLimit; dispNumber++) {
+    for (int dispNumber; dispNumber < displaysCount; dispNumber++) {
       for (int col = 0; col < columnCount; col++) {
         shiftSetValue(bytesLeds[dispNumber], col, bitRead(ledsBuffer[dispNumber][rowCount - 1 - row], col));
       }
@@ -99,7 +109,7 @@ void ledsTimerHandler()
 
   }
   if (toggle == 1) {
-    selectLedsRow(20); // pin 7 of the multiplexer
+    selectLedsRow(20); // row 20 doesn't exist, used to turn off all leds
   }
 
 }
