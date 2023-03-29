@@ -5,19 +5,21 @@ void i2cInit() {
   Wire.onRequest(requestEvent); // register event
 }
 
+/*
 unsigned char reverse(unsigned char b) {
   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
   return b;
 }
+*/
 
 void receiveEvent(int howMany)
 {
   int32_t bigNum;
   byte command;
   byte wireBuffer[(displaysCount * 4 * rowCount) + 1]; // command byte + 1 byte or 4 bytes per display
-  byte wireBufferFlipped[(displaysCount * 4 * rowCount) + 1];
+  //byte wireBufferFlipped[(displaysCount * 4 * rowCount) + 1];
   int currentDisplay = 0;
   int iterator = 0;
   receivingData = true;

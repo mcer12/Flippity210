@@ -1,13 +1,13 @@
 /*
-void setLocalPixel(int x, int y, bool value, int display) {
+  void setLocalPixel(int x, int y, bool value, int display) {
   bitWrite(dotsBuffer[display][y], x, value);
-}
+  }
 
-void setPixel(int x, int y, bool value) {
+  void setPixel(int x, int y, bool value) {
   int displayNumber = x / columnCount;
   x = x % columnCount;
   setLocalPixel(x, y, value, displayNumber);
-}
+  }
   void blankDisplay(uint8_t dispNumber) {
   for (int i = 0; i < rowCount; i++) {
     dotsBuffer[dispNumber][i] = 0;
@@ -381,26 +381,26 @@ void setDisplayStatus(byte busy) {
 }
 void setDisplaySpeed(byte speed) {
   displayData[1] = speed;
-  /*
-    if (speed == FLIPPITY210_SPEED_HIGH) {
-      flipDotUpdateDelay = 100;
-    }
-    else if (speed == FLIPPITY210_SPEED_MED) {
-      flipDotUpdateDelay = 1000;
-    }
-    else if (speed == FLIPPITY210_SPEED_LOW) {
-      flipDotUpdateDelay = 2000;
-    }
-    else if (speed == FLIPPITY210_SPEED_VERY_LOW) {
-      flipDotUpdateDelay = 4000;
-    }
-    else if (speed == FLIPPITY210_SPEED_EXTREMELY_LOW) {
-      flipDotUpdateDelay = 10000;
-    }
-    else if (speed == FLIPPITY210_SPEED_LOWEST) {
-      flipDotUpdateDelay = 20000;
-    }
-  */
+
+  if (speed == FLIPPITY210_SPEED_HIGH) {
+    flipDotUpdateDelay = 100;
+  }
+  else if (speed == FLIPPITY210_SPEED_MED) {
+    flipDotUpdateDelay = 1000;
+  }
+  else if (speed == FLIPPITY210_SPEED_LOW) {
+    flipDotUpdateDelay = 2000;
+  }
+  else if (speed == FLIPPITY210_SPEED_VERY_LOW) {
+    flipDotUpdateDelay = 4000;
+  }
+  else if (speed == FLIPPITY210_SPEED_EXTREMELY_LOW) {
+    flipDotUpdateDelay = 10000;
+  }
+  else if (speed == FLIPPITY210_SPEED_LOWEST) {
+    flipDotUpdateDelay = 20000;
+  }
+
 }
 
 void setDisplayAnimation(byte anim) {
