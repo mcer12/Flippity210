@@ -1,8 +1,8 @@
 /*
 
-  DISPLAY FIRMWARE
+  FW SIZE
   STM32F103C6T6 (32k flash): 
-  sketch uses 99% of memory with USB support disabled
+  sketch uses 98% of memory with USB support disabled & DISPLAY_COUNT_LIMIT set to 2
   STM32F103C8T6 (64k flash): 
   sketch uses 51% of memory with USB support disabled
   sketch uses 78% of memory with USB support & flashing via HID bootloader
@@ -69,9 +69,6 @@
 #define _TIMERINTERRUPT_LOGLEVEL_ 0
 #endif
 
-#ifdef USE_SPI
-#include <SPI.h>
-#endif
 
 #include <Wire.h>
 #include "STM32TimerInterrupt.h"
@@ -171,7 +168,7 @@
 #define FLIPPITY210_STATUS_READY 0x11
 #define FLIPPITY210_STATUS_BUSY 0x10
 
-byte displayData[5] {
+uint8_t displayData[5] {
   FLIPPITY210_STATUS_READY, // status (ready / busy)
   FLIPPITY210_SPEED_HIGH, // speed
   FLIPPITY210_BRI_HIGH, // brightness
@@ -258,44 +255,5 @@ void loop() {
     dataReady = false;
     refreshDisplays();
   }
-
-  /*
-    draw5x9(1, 0, lettersSquare[0]);
-    draw5x9(8, 0, lettersSquare[1]);
-    draw5x9(15, 0, lettersSquare[2]);
-    draw5x9(22, 0, lettersSquare[3]);
-
-    draw5x9(1, 10, lettersSquare[4]);
-    draw5x9(8, 10, lettersSquare[5]);
-    draw5x9(15, 10, lettersSquare[6]);
-    draw5x9(22, 10, lettersSquare[7]);
-
-    refreshDisplay(false);
-    delay(2000);
-
-    draw5x9(1, 0, lettersSquare[8]);
-    draw5x9(8, 0, lettersSquare[9]);
-    draw5x9(15, 0, lettersSquare[10]);
-    draw5x9(22, 0, lettersSquare[11]);
-
-    draw5x9(1, 10, lettersSquare[12]);
-    draw5x9(8, 10, lettersSquare[13]);
-    draw5x9(15, 10, lettersSquare[14]);
-    draw5x9(22, 10, lettersSquare[15]);
-
-    refreshDisplay(false);
-    delay(2000);
-
-
-    invertDisplay();
-
-    refreshDisplay(false);
-    delay(2000);
-
-    blankDisplay();
-
-    refreshDisplay(false);
-    delay(2000);
-  */
 
 }

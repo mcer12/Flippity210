@@ -11,6 +11,7 @@ void shiftSetValue(volatile byte *data, uint8_t pin, bool value) {
   }
   }
 */
+
 void shiftOutFast(PinName dataPin, PinName clockPin, bool MSBFIRST, uint8_t command)
 {
   for (int i = 0; i < 8; i++)
