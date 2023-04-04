@@ -1,9 +1,16 @@
 /*
 
+  IDE SETTINGS:
+  UART: Enabled
+  USB: Enabled (disable for low memory chips)
+  Optimize: Fastest + LTO
+  Upload method: SWD (or HID if you flashed HID bootloader beforehand)
+
+
   FW SIZE
-  STM32F103C6T6 (32k flash): 
-  sketch uses 98% of memory with USB support disabled & DISPLAY_COUNT_LIMIT set to 2
-  STM32F103C8T6 (64k flash): 
+  STM32F103C6T6 (32k flash):
+  sketch uses 98% of memory with USB support disabled with either DISPLAY_COUNT_LIMIT set to 2 or some animations disabled
+  STM32F103C8T6 (64k flash):
   sketch uses 51% of memory with USB support disabled
   sketch uses 78% of memory with USB support & flashing via HID bootloader
 
@@ -37,7 +44,7 @@
   FLIPPITY210_ANIM_SLIDE_LEFT 0x02
   FLIPPITY210_ANIM_SLIDE_FROM_TOP 0x03
   FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM 0x04
-  FLIPPITY210_ANIM_NOISE 0x05
+  FLIPPITY210_ANIM_DISSOLVE 0x05
   FLIPPITY210_ANIM_SLIDE_RIGHT_FORCED 0x06
   FLIPPITY210_ANIM_SLIDE_LEFT_FORCED 0x07
   FLIPPITY210_ANIM_SLIDE_FROM_TOP_FORCED 0x08
@@ -59,10 +66,13 @@
   led power
 
 */
+
 //#define USE_SERIAL // eats alot of memory, use for debug
-#define ENABLE_DISSOLVE // ugly nested loops function to disolve dots, wont fit in STM32F103C6T6
-//#define ENABLE_ONLY_DEFAULT_ANIMATION // saves alot of space
-#define DISPLAY_COUNT_LIMIT 4 // normally it's 4 but if you use STM32 with less flash memory, lowering can free tiny bit of space
+#define ENABLE_ANIMATION_DISSOLVE // this is very badly implemented so removing it frees quite alot of space
+#define ENABLE_ANIMATION_SLIDE_FROM_BOTTOM
+#define ENABLE_ANIMATION_SLIDE_FROM_TOP
+#define ENABLE_ANIMATION_SLIDE_LEFT
+#define DISPLAY_COUNT_LIMIT 2 // normally it's 4 but if you use STM32 with less flash memory, lowering can free tiny bit of space
 
 #ifndef USE_SERIAL
 #define TIMER_INTERRUPT_DEBUG 0
@@ -208,7 +218,7 @@ volatile uint32_t dotsBuffer[DISPLAY_COUNT_LIMIT][rowCount]; // buffer for flip 
 volatile uint8_t bytes[registersCount];
 volatile bool receivingData = false;
 volatile bool dataReady = false;
-volatile int flipDotUpdateDelay = 100; // microseconds
+volatile unsigned flipDotUpdateDelay = 100; // microseconds
 volatile unsigned int dotsToFlipUnflip[2]; // dots to flip, dots to unflip
 
 // Leds vars

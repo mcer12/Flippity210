@@ -45,7 +45,7 @@ void ledsWriteBytesToPin(PinName dataPin, volatile byte *data) {
   digitalWriteFast(LEDS_LATCH, 1);
 }
 
-
+#if DISPLAY_COUNT_LIMIT > 2
 void shiftOutFast4(PinName dataPin1, PinName dataPin2, PinName dataPin3, PinName dataPin4, byte command1, byte command2, byte command3, byte command4, PinName clockPin,  bool MSBFIRST)
 {
   for (int i = 0; i < 8; i++)
@@ -54,7 +54,7 @@ void shiftOutFast4(PinName dataPin1, PinName dataPin2, PinName dataPin3, PinName
     bool output2 = false;
     bool output3 = false;
     bool output4 = false;
-    
+
     if (MSBFIRST)
     {
       output1 = command1 & 0b10000000;
@@ -87,14 +87,55 @@ void shiftOutFast4(PinName dataPin1, PinName dataPin2, PinName dataPin3, PinName
     delayMicroseconds(1);
   }
 }
-
-void ledsWriteBytesToPins(PinName dataPin1, PinName dataPin2, PinName dataPin3, PinName dataPin4, volatile byte *data1, volatile byte *data2, volatile byte *data3, volatile byte *data4) {
+void ledsWriteBytesToPins4(PinName dataPin1, PinName dataPin2, PinName dataPin3, PinName dataPin4, volatile byte *data1, volatile byte *data2, volatile byte *data3, volatile byte *data4) {
   digitalWriteFast(LEDS_LATCH, 0);
   for (int i = 0; i < ledsRegistersCount; i++) {
     shiftOutFast4(dataPin1, dataPin2, dataPin3, dataPin4, data1[ledsRegistersCount - 1 - i], data2[ledsRegistersCount - 1 - i], data3[ledsRegistersCount - 1 - i], data4[ledsRegistersCount - 1 - i], LEDS_CLK, MSBFIRST);
   }
   digitalWriteFast(LEDS_LATCH, 1);
 }
+
+#else
+
+void shiftOutFast2(PinName dataPin1, PinName dataPin2, byte command1, byte command2, PinName clockPin,  bool MSBFIRST)
+{
+  for (int i = 0; i < 8; i++)
+  {
+    bool output1 = false;
+    bool output2 = false;
+
+    if (MSBFIRST)
+    {
+      output1 = command1 & 0b10000000;
+      command1 = command1 << 1;
+      output2 = command2 & 0b10000000;
+      command2 = command2 << 1;
+    }
+    else
+    {
+      output1 = command1 & 0b00000001;
+      command1 = command1 >> 1;
+      output2 = command2 & 0b00000001;
+      command2 = command2 >> 1;
+    }
+    digitalWriteFast(dataPin1, output1);
+    digitalWriteFast(dataPin2, output2);
+    digitalWriteFast(clockPin, true);
+    delayMicroseconds(1);
+    digitalWriteFast(clockPin, false);
+    delayMicroseconds(1);
+  }
+}
+
+void ledsWriteBytesToPins2(PinName dataPin1, PinName dataPin2, volatile byte *data1, volatile byte *data2) {
+  digitalWriteFast(LEDS_LATCH, 0);
+  for (int i = 0; i < ledsRegistersCount; i++) {
+    shiftOutFast2(dataPin1, dataPin2, data1[ledsRegistersCount - 1 - i], data2[ledsRegistersCount - 1 - i], LEDS_CLK, MSBFIRST);
+  }
+  digitalWriteFast(LEDS_LATCH, 1);
+}
+
+#endif
 
 void spi2WriteBytes(volatile byte *data) {
 
@@ -110,17 +151,17 @@ void spi2WriteBytes(volatile byte *data) {
 }
 
 /*
-void ledsWriteBytes(volatile byte *data) {
+  void ledsWriteBytes(volatile byte *data) {
 
-#ifdef USE_SPI
+  #ifdef USE_SPI
   SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE1));
   for (int i = 0; i < ledsRegistersCount; i++) {
     SPI.transfer(data[ledsRegistersCount - 1 - i]);
   }
   SPI.endTransaction();
-#endif
+  #endif
 
-#ifndef USE_SPI
+  #ifndef USE_SPI
   digitalWriteFast(LEDS_LATCH, 0);
   for (int i = 0; i < ledsRegistersCount; i++) {
     //shiftOut(pinNametoDigitalPin(LEDS_D0), pinNametoDigitalPin(LEDS_CLK), MSBFIRST, data[ledsRegistersCount - 1 - i]);
@@ -128,6 +169,6 @@ void ledsWriteBytes(volatile byte *data) {
     shiftOutFast(LEDS_D1, LEDS_CLK, MSBFIRST, data[ledsRegistersCount - 1 - i]);
   }
   digitalWriteFast(LEDS_LATCH, 1);
-#endif
-}
+  #endif
+  }
 */

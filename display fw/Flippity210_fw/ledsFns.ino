@@ -72,20 +72,21 @@ void selectLedsRow(byte rowNumber) {
   // This is very time critical
   // we need to set values first
   // reading bits in between GPIO manipulation can cause glitches
-  uint8_t values[] = {
+  /*
+    uint8_t values[] = {
     bitRead(rowNumber, 0),
     bitRead(rowNumber, 1),
     bitRead(rowNumber, 2),
     bitRead(rowNumber, 3),
     bitRead(rowNumber, 4),
     bitRead(rowNumber, 5)
-  };
-
-  digitalWriteFast(LEDS_ADD2, values[3]);
-  digitalWriteFast(LEDS_ADD1, values[4]);
-  digitalWriteFast(LEDS_A0, values[0]);
-  digitalWriteFast(LEDS_A1, values[1]);
-  digitalWriteFast(LEDS_A2, values[2]);
+    };
+  */
+  digitalWriteFast(LEDS_ADD2, bitRead(rowNumber, 3));
+  digitalWriteFast(LEDS_ADD1, bitRead(rowNumber, 4));
+  digitalWriteFast(LEDS_A0, bitRead(rowNumber, 0));
+  digitalWriteFast(LEDS_A1, bitRead(rowNumber, 1));
+  digitalWriteFast(LEDS_A2, bitRead(rowNumber, 2));
 }
 
 void ledsTimerHandler()
@@ -101,7 +102,12 @@ void ledsTimerHandler()
         shiftSetValue(bytesLeds[dispNumber], col, bitRead(ledsBuffer[dispNumber][rowCount - 1 - row], col));
       }
     }
-    ledsWriteBytesToPins(LEDS_D0, LEDS_D1, LEDS_D2, LEDS_D3, bytesLeds[0], bytesLeds[1], bytesLeds[2], bytesLeds[3]); // Display 1 and 2
+    
+#if DISPLAY_COUNT_LIMIT > 2
+    ledsWriteBytesToPins4(LEDS_D0, LEDS_D1, LEDS_D2, LEDS_D3, bytesLeds[0], bytesLeds[1], bytesLeds[2], bytesLeds[3]); // Display 1-4
+#else
+    ledsWriteBytesToPins2(LEDS_D0, LEDS_D1, bytesLeds[0], bytesLeds[1]); // Display 1-2
+#endif
 
     selectLedsRow(row);
     row++;

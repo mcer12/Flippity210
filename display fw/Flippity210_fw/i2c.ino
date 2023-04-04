@@ -17,10 +17,10 @@ unsigned char reverse(unsigned char b) {
 void receiveEvent(int howMany)
 {
   int32_t bigNum;
-  byte command;
+  //byte command;
   byte wireBuffer[(displaysCount * 4 * rowCount) + 1]; // command byte + 1 byte or 4 bytes per display
   //byte wireBufferFlipped[(displaysCount * 4 * rowCount) + 1];
-  int currentDisplay = 0;
+  //uint8_t currentDisplay = 0;
   int iterator = 0;
   receivingData = true;
 
