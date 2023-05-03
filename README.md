@@ -16,4 +16,4 @@ Control board and library for BUSE BS210 flip dot displays. Might also work with
 - PCB: Finished (V2.1)
 - Library: Finished
 - Added ESP8266 daugher board for easy flashing and development even when installed in a 3D printed enclosure
-- 3D printed enclosure: In the making
+- 3D printed enclosure: https://www.printables.com/model/468031-flippity210-flip-dot-display-case
