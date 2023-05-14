@@ -11,6 +11,7 @@ Control board and library for BUSE BS210 flip dot displays. Might also work with
 - 24V adapter (see repository wiki)
 - Arduino IDE to flash the board and optionally STM32 Cube Programmer to flash the USB bootloader
 - Arduino compatible board to control the display via I2c. Tested with Arduino (uno, nano, pro mini), Raspberry Pi Pico, ESP8266 and ESP32 - pinouts included in the example sketch
+- See project wiki https://github.com/mcer12/Flippity210/wiki
 
 ## Status
 - PCB: Finished (V2.1)
