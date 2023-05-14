@@ -242,7 +242,7 @@ void setup() {
 
   setDisplayStatus(FLIPPITY210_STATUS_BUSY);
 
-  //delay(100); // give ESP some time to boot
+  delay(300); // give ESP some time to boot, needed only with ESP-01
 
   i2cInit();
 
