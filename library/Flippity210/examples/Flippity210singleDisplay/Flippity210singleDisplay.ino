@@ -2,31 +2,31 @@
   Basic demo for Flippity210 library
   See https://github.com/mcer12/Flippity210/wiki/Arduino-library
   Requires fonts from https://github.com/robjen/GFX_fonts
+  Just download the .h files and put them in the sketch folder.
 */
 
 
 #include <Wire.h>    // I2C library
 #include <Adafruit_GFX.h>    // Core graphics library
 #include "Flippity210.h"
-#include "Sarpanch_Regular6pt8bBitmaps.h"
 #include "Font5x7Fixed.h"
 #include "Font4x5Fixed.h"
 
 /*
-Default pinout (changeable on some platforms)
-Platform: SDA, SCL
-ESP8266: 4, 5 (don't mistake with D4, D5)
-ESP32: 21, 22
-Atmega328/168: A4, A5
-RP2040: 4, 5
+  Default pinout (changeable on some platforms)
+  Platform: SDA, SCL
+  ESP8266: 4, 5 (don't mistake with D4, D5)
+  ESP8266 (onboard): 0, 2
+  ESP32: 21, 22
+  Atmega328/168: A4, A5
+  RP2040: 4, 5
 */
 
-int displays = 2; // number of daisy chained displays
+int displays = 1; // number of daisy chained displays, it should match jumper on the flippity board.
 Flippity210 display(displays, 4, 5); // Explicitly set I2C pins, doesn't work on atmega
 //Flippity210 display(displays);
 
 unsigned int delayMs = 3000;
-
 
 void setup() {
   // Enable serial
@@ -49,6 +49,10 @@ void setup() {
   display.fill();
   Serial.println("Filled");
   display.update();
+  delay(1000);
+  display.clear();
+  display.update();
+
   Serial.println("Updated dots");
 
   delay(5000);
