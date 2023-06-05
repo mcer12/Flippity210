@@ -5,6 +5,7 @@ Control board and library for BUSE BS210 flip dot displays. Might also work with
 - The library supports Adafruit GFX which enables you to draw fonts and geometry.
 - Custom PCB and schematic is provided in the repository and replaces the original control board.
 - The board has pin header to connect ESP-01 / ESP-1 directly
+- Supports up to 4 daisy-chained displays with the default firmware, up to 8 in theory with SW changes.
 
 ## What's needed to make it work:
 - Assembled custom board (see repository wiki page and schematic notes)
