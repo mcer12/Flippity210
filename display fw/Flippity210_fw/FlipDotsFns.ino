@@ -171,6 +171,7 @@ void updateCol(uint8_t dispNumber, uint8_t colNumber, bool forceChange) {
 }
 
 #if defined(ENABLE_ANIMATION_DISSOLVE)
+
 void getNumPixelsToFlipUnflip() {
   dotsToFlipUnflip[0] = 0; // Dots to flip
   dotsToFlipUnflip[1] = 0; // Dots to unflip
@@ -188,6 +189,7 @@ void getNumPixelsToFlipUnflip() {
     }
   }
 }
+
 
 void dissolveDots() {
   getNumPixelsToFlipUnflip();
@@ -297,7 +299,136 @@ void dissolveDots() {
   }
 
 }
+
 #endif
+
+
+
+
+
+/*
+void getNumPixelsToFlipUnflip() {
+  dotsToFlipUnflip[0] = 0; // Dots to flip
+  dotsToFlipUnflip[1] = 0; // Dots to unflip
+
+  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
+    for (int row = 0; row < rowCount; row++) {
+      for (int colNumber = 0; colNumber < columnCount; colNumber++) {
+        if (bitRead(dotsBuffer[dispNumber][row], colNumber) && bitRead(dotsBuffer[dispNumber][row], colNumber) != bitRead(dotsActive[dispNumber][row], colNumber)) {
+          dotsToFlipUnflip[0]++;
+        }
+        if (!bitRead(dotsBuffer[dispNumber][row], colNumber) && bitRead(dotsBuffer[dispNumber][row], colNumber) != bitRead(dotsActive[dispNumber][row], colNumber)) {
+          dotsToFlipUnflip[1]++;
+        }
+      }
+    }
+  }
+}
+
+
+
+void dissolveToggle(bool source) {
+  digitalWriteFast(GROUP_ADDR_B0, !source); // 1 = 24V, 0 = GND
+
+  unsigned int randToFlipUnflip = 0;
+  unsigned int iterator = 0;
+  bool breakOuterLoop = false;
+
+  for (int i = dotsToFlipUnflip[1]; i > 0; i--) {
+    randToFlipUnflip = random(0, i) + 1;
+    breakOuterLoop = false;
+    iterator = 0;
+
+    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
+
+      if (breakOuterLoop) break;
+
+      for (int row = 0; row < rowCount; row++) {
+        if (breakOuterLoop) break;
+
+        for (int colNumber = 0; colNumber < columnCount; colNumber++) {
+          if (breakOuterLoop) break;
+
+          if (source) {
+            if (!bitRead(dotsBuffer[dispNumber][row], colNumber)) continue;
+          } else {
+            if (bitRead(dotsBuffer[dispNumber][row], colNumber)) continue;
+          }
+
+          if (bitRead(dotsBuffer[dispNumber][row], colNumber) == bitRead(dotsActive[dispNumber][row], colNumber)) continue; // if the value is the same as active, skip for faster refresh
+
+          iterator++;
+
+          if (iterator != randToFlipUnflip) continue;
+          if (iterator == randToFlipUnflip) {
+            breakOuterLoop = true;
+            bitWrite(dotsActive[dispNumber][row], colNumber, source);
+          }
+
+          dotsSelectDisplay(dispNumber);
+          dotsSelectCol(colNumber);
+
+          for (int ii = 0; ii < rowCount; ii++) { // reset all to zero because only one row can be flipped at a time!!!!! Otherwise magic smoke.
+            shiftSetValue(bytes, rows[ii][0], 0);
+            shiftSetValue(bytes, rows[ii][1], 0);
+          }
+          if (source) {
+            shiftSetValue(bytes, rows[row][1], bitRead(dotsBuffer[dispNumber][row], colNumber));
+          } else {
+            shiftSetValue(bytes, rows[row][0], !bitRead(dotsBuffer[dispNumber][row], colNumber));
+          }
+
+          spi2WriteBytes(bytes);
+
+          digitalWriteFast(source ? SOURCE_EN : SINK_EN, 1);
+          digitalWriteFast(COLS_ENABLE, 1);
+          delayMicroseconds(DOTS_POWERON_TIME);
+          digitalWriteFast(COLS_ENABLE, 0);
+          digitalWriteFast(source ? SOURCE_EN : SINK_EN, 0);
+          delayMicroseconds(flipDotUpdateDelay);
+        }
+      }
+    }
+  }
+}
+
+
+
+void dissolveDots() {
+  getNumPixelsToFlipUnflip();
+
+  unsigned int randToFlip = 0;
+  unsigned int randToUnflip = 0;
+  unsigned int iterator = 0;
+  bool breakOuterLoop = false;
+
+
+  dissolveToggle(1);
+
+  dissolveToggle(0);
+
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void dotsFlipRow(uint8_t row, bool forceChange) {
   digitalWriteFast(GROUP_ADDR_B0, 0); // 1 = 24V, 0 = GND
@@ -481,7 +612,7 @@ void refreshDisplays() {
       dotsActive[dispNumber][i] = dotsBuffer[dispNumber][i];
     }
   }
-  
+
 #ifdef USE_SERIAL
   Serial.print("[DISPLAY] Done, time: ");
   Serial.println(millis() - millisUpdate);

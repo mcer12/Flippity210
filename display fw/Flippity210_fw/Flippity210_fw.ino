@@ -72,7 +72,7 @@
 #define ENABLE_ANIMATION_SLIDE_FROM_BOTTOM
 #define ENABLE_ANIMATION_SLIDE_FROM_TOP
 #define ENABLE_ANIMATION_SLIDE_LEFT
-#define DISPLAY_COUNT_LIMIT 2 // normally it's 4 but if you use STM32 with less flash memory, lowering can free tiny bit of space
+#define DISPLAY_COUNT_LIMIT 4 // normally it's 4 but if you use STM32 with less flash memory, lowering can free tiny bit of space
 
 #ifndef USE_SERIAL
 #define TIMER_INTERRUPT_DEBUG 0
@@ -126,7 +126,7 @@
 #define LEDS_D6 PB_9
 #define LEDS_D7 PB_8
 
-#define DOTS_POWERON_TIME 600 // Microseconds. Sets time to keep each dot powered to flip correctly. 500uS-1000uS, more will overheat the drivers! Recommended 500uS or more for 24V, 800uS or more for 12V
+#define DOTS_POWERON_TIME 700 // Microseconds. Sets time to keep each dot powered to flip correctly. 500uS-1000uS, more will overheat the drivers! Recommended 500uS or more for 24V, 800uS or more for 12V
 #define LEDS_INTERVAL_MICROS_LOW_BRI 100 // Microseconds. Speed of switching leds rows
 #define LEDS_INTERVAL_MICROS_MED_BRI 155 // Microseconds. Speed of switching leds rows
 #define LEDS_INTERVAL_MICROS_HIGH_BRI 300 // Microseconds. Speed of switching leds rows
@@ -218,7 +218,7 @@ volatile uint32_t dotsBuffer[DISPLAY_COUNT_LIMIT][rowCount]; // buffer for flip 
 volatile uint8_t bytes[registersCount];
 volatile bool receivingData = false;
 volatile bool dataReady = false;
-volatile unsigned flipDotUpdateDelay = 100; // microseconds
+volatile unsigned int flipDotUpdateDelay = 100; // microseconds
 volatile unsigned int dotsToFlipUnflip[2]; // dots to flip, dots to unflip
 
 // Leds vars
