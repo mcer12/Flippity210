@@ -78,7 +78,7 @@ void receiveEvent(int howMany)
         Serial.print(wireBuffer[6]);
         Serial.println("");
     */
-    if (wireBuffer[2] == rowCount - 1 && wireBuffer[1] == 1) {
+    if (wireBuffer[2] == rowCount - 1 && wireBuffer[1] == 0) { // display 0 goes last and marks the end of the data, once received, we can update.
       receivingData = false;
       dataReady = true;
     }
