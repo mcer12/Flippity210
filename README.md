@@ -5,8 +5,9 @@ Control board and library for BUSE BS210 flip dot displays. Might also work with
 
 - This project enables you to control these beautiful flip-dot displays via I2C the same way you use I2C oled displays for example. 
 - The library supports Adafruit GFX which enables you to draw fonts and geometry.
-- Custom PCB and schematic is provided in the repository and replaces the original control board.
-- Optional onboard ESP8266 for easy development
+- Custom PCB and schematic is provided in the repository and replaces the original control board (it is not the same form facetor!).
+- The board has two MCUs - STM32 to control the display itself and provide a simple I2C interface to communicate with, and optional ESP8266 to control the STM32 via I2C on high level.
+- I2C header if you don't want o use built-in ESP8266 and/or want to add other I2C devices.
 - Supports up to 4 daisy-chained displays with the default firmware, up to 8 in theory with SW changes.
 
 ## What's needed to make it work:
