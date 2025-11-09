@@ -1,7 +1,7 @@
 # Flippity210
-Control board and library for BUSE BS210 flip dot displays. Might also work with BS110 (non-led version)
+Control board and library for BUSE BS210 flip dot displays. *Should* also work with BS110 (non-led version, unconfirmed)
 
-![alt text](https://github.com/mcer12/Flippity210/raw/refs/heads/master/resources/wall_clock.webp)  
+https://github.com/user-attachments/assets/d0198746-1350-4b9b-a5e5-f4e7e80c436d
 
 - This project enables you to control these beautiful flip-dot displays via I2C the same way you use I2C oled displays for example. 
 - The library supports Adafruit GFX which enables you to draw fonts and geometry.
@@ -21,3 +21,10 @@ Control board and library for BUSE BS210 flip dot displays. Might also work with
 - PCB: Finished (V3), V3 version has integrated ESP8266 so it doesn't require the daughter board anymore.
 - Library: Finished
 - 3D printed enclosure: https://www.printables.com/model/468031-flippity210-flip-dot-display-case
+
+![alt text](https://github.com/mcer12/Flippity210/raw/refs/heads/master/resources/wall_clock.webp)  
+
+<img width="1920" height="898" alt="Photo 29 03 2025, 18 18 272" src="https://github.com/user-attachments/assets/5c9d3742-14c8-4529-b140-a83eb6b31b32" />
+
+
+
