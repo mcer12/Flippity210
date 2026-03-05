@@ -1,5 +1,5 @@
 # Flippity210
-Control board and library for BUSE BS210 flip dot displays. *Should* also work with BS110 (non-led version, unconfirmed)
+Control board and library for BUSE BS210 flip dot displays. It also works with older BS110 (non-led) variant, just bear in mind that BS110 is a different form factor so it won't fit in the 3D printed enclosure!
 
 https://github.com/user-attachments/assets/d0198746-1350-4b9b-a5e5-f4e7e80c436d
 
