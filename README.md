@@ -5,7 +5,7 @@ https://github.com/user-attachments/assets/d0198746-1350-4b9b-a5e5-f4e7e80c436d
 
 - This project enables you to control these beautiful flip-dot displays via I2C the same way you use I2C oled displays for example. 
 - The library supports Adafruit GFX which enables you to draw fonts and geometry.
-- Custom PCB and schematic is provided in the repository and replaces the original control board (it is not the same form facetor!).
+- Custom PCB and schematic is provided in the repository and replaces the original control board (it is not the same form factor!).
 - The board has two MCUs - STM32 to control the display itself and provide a simple I2C interface to communicate with, and optional ESP8266 to control the STM32 via I2C on high level.
 - I2C header if you don't want o use built-in ESP8266 and/or want to add other I2C devices.
 - Supports up to 4 daisy-chained displays with the default firmware, up to 8 in theory with SW changes.
