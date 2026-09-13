@@ -13,12 +13,12 @@ https://github.com/user-attachments/assets/d0198746-1350-4b9b-a5e5-f4e7e80c436d
 ## What's needed to make it work:
 - Assembled custom board (see repository wiki page and schematic notes)
 - 24V adapter (see repository wiki)
-- Arduino IDE to flash the board and optionally STM32 Cube Programmer to flash the USB bootloader
-- Arduino compatible board to control the display via I2c. Tested with Arduino (uno, nano, pro mini), Raspberry Pi Pico, ESP8266 and ESP32 - pinouts included in the example sketch
+- ST-Link and STM Cube Programmer to flash STM32 firmware to the board
+- Arduino IDE or PlatformIO to flash the integrated ESP8266 or you can connect to the board via I2C from Raspberry or whatever else.
 - See project wiki https://github.com/mcer12/Flippity210/wiki
 
 ## Status
-- PCB: Finished (V3), V3 version has integrated ESP8266 so it doesn't require the daughter board anymore.
+- PCB: Finished! Latest V3X (and V3) revision has integrated ESP8266 so it doesn't require the daughter board anymore.
 - Library: Finished
 - 3D printed enclosure: https://www.printables.com/model/468031-flippity210-flip-dot-display-case
 
