@@ -9,7 +9,7 @@
 
   FW SIZE
   STM32F103C6T6 (32k flash):
-  sketch uses 98% of memory with USB support disabled with either DISPLAY_COUNT_LIMIT set to 2 or some animations disabled
+  sketch uses 98% of memory with USB support disabled
   STM32F103C8T6 (64k flash):
   sketch uses 51% of memory with USB support disabled
   sketch uses 78% of memory with USB support & flashing via HID bootloader
@@ -67,6 +67,7 @@
 
 */
 
+#define USE_INTERNAL_OSCILLATOR // Use this to omit the crystals
 //#define USE_SERIAL // eats alot of memory, use for debug
 #define ENABLE_ANIMATION_DISSOLVE // this is very badly implemented so removing it frees quite alot of space
 #define ENABLE_ANIMATION_SLIDE_FROM_BOTTOM
@@ -79,6 +80,41 @@
 #define _TIMERINTERRUPT_LOGLEVEL_ 0
 #endif
 
+#ifdef USE_INTERNAL_OSCILLATOR
+extern "C" void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+#endif
 
 #include <Wire.h>
 #include "STM32TimerInterrupt.h"
@@ -157,6 +193,7 @@
 #define FLIPPITY210_SPEED_VERY_LOW 0x04
 #define FLIPPITY210_SPEED_EXTREMELY_LOW 0x05
 #define FLIPPITY210_SPEED_LOWEST 0x06
+#define FLIPPITY210_SPEED_SLOOOOOOOOW 0x07
 
 #define FLIPPITY210_BRI_LOW 0x01
 #define FLIPPITY210_BRI_MED 0x02

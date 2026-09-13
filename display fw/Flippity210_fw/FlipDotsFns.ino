@@ -172,22 +172,27 @@ void updateCol(uint8_t dispNumber, uint8_t colNumber, bool forceChange) {
 
 #if defined(ENABLE_ANIMATION_DISSOLVE)
 
-void getNumPixelsToFlipUnflip() {
-  dotsToFlipUnflip[0] = 0; // Dots to flip
-  dotsToFlipUnflip[1] = 0; // Dots to unflip
+void getNumPixelsToFlipUnflip()
+{
+    dotsToFlipUnflip[0] = 0; // flip
+    dotsToFlipUnflip[1] = 0; // unflip
 
-  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
-    for (int row = 0; row < rowCount; row++) {
-      for (int colNumber = 0; colNumber < columnCount; colNumber++) {
-        if (bitRead(dotsBuffer[dispNumber][row], colNumber) && bitRead(dotsBuffer[dispNumber][row], colNumber) != bitRead(dotsActive[dispNumber][row], colNumber)) {
-          dotsToFlipUnflip[0]++;
+    for (int disp = 0; disp < displaysCount; disp++)
+    {
+        for (int row = 0; row < rowCount; row++)
+        {
+            for (int col = 0; col < columnCount; col++)
+            {
+                bool bufferBit = bitRead(dotsBuffer[disp][row], col);
+                bool activeBit = bitRead(dotsActive[disp][row], col);
+
+                if (bufferBit != activeBit)
+                {
+                    dotsToFlipUnflip[bufferBit ? 0 : 1]++;
+                }
+            }
         }
-        if (!bitRead(dotsBuffer[dispNumber][row], colNumber) && bitRead(dotsBuffer[dispNumber][row], colNumber) != bitRead(dotsActive[dispNumber][row], colNumber)) {
-          dotsToFlipUnflip[1]++;
-        }
-      }
     }
-  }
 }
 
 
@@ -525,6 +530,9 @@ void setDisplaySpeed(byte speed) {
   else if (speed == FLIPPITY210_SPEED_LOWEST) {
     flipDotUpdateDelay = 20000;
   }
+  else if (speed == FLIPPITY210_SPEED_SLOOOOOOOOW) {
+    flipDotUpdateDelay = 40000;
+  }
 
 }
 
@@ -541,75 +549,94 @@ void refreshDisplays() {
 
   unsigned long millisUpdate = millis();
 
-  if (displayData[3] == FLIPPITY210_ANIM_SLIDE_RIGHT_FORCED) {
-    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
-      dotsSelectDisplay(dispNumber);
-      for (int col = 0; col < columnCount; col++) {
-        updateCol(dispNumber, col, true);
-      }
-    }
-  }
+  uint8_t anim = displayData[3];
+
+  // Column-based animations
+  if (
+      anim == FLIPPITY210_ANIM_SLIDE_RIGHT ||
+      anim == FLIPPITY210_ANIM_SLIDE_RIGHT_FORCED
+
 #ifdef ENABLE_ANIMATION_SLIDE_LEFT
-  else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_LEFT) {
-    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
-      dotsSelectDisplay(displaysCount - 1 - dispNumber);
-      for (int col = 0; col < columnCount; col++) {
-        updateCol(displaysCount - 1 - dispNumber, columnCount - 1 - col, false);
-      }
-    }
-  }
-  else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_LEFT_FORCED) {
-    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
-      dotsSelectDisplay(displaysCount - 1 - dispNumber);
-      for (int col = 0; col < columnCount; col++) {
-        updateCol(displaysCount - 1 - dispNumber, columnCount - 1 - col, true);
-      }
-    }
-  }
+      || anim == FLIPPITY210_ANIM_SLIDE_LEFT
+      || anim == FLIPPITY210_ANIM_SLIDE_LEFT_FORCED
 #endif
+  ) {
+
+    bool reverse =
+#ifdef ENABLE_ANIMATION_SLIDE_LEFT
+      (anim == FLIPPITY210_ANIM_SLIDE_LEFT ||
+       anim == FLIPPITY210_ANIM_SLIDE_LEFT_FORCED);
+#else
+      false;
+#endif
+
+    bool force =
+      (anim == FLIPPITY210_ANIM_SLIDE_RIGHT_FORCED)
+#ifdef ENABLE_ANIMATION_SLIDE_LEFT
+      || (anim == FLIPPITY210_ANIM_SLIDE_LEFT_FORCED)
+#endif
+      ;
+
+    for (int disp = 0; disp < displaysCount; disp++) {
+
+      int dispIndex = reverse ?
+        (displaysCount - 1 - disp) :
+        disp;
+
+      dotsSelectDisplay(dispIndex);
+
+      for (int col = 0; col < columnCount; col++) {
+
+        int colIndex = reverse ?
+          (columnCount - 1 - col) :
+          col;
+
+        updateCol(dispIndex, colIndex, force);
+      }
+    }
+  }
+
 #ifdef ENABLE_ANIMATION_SLIDE_FROM_TOP
-  else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_FROM_TOP) {
+  else if (
+      anim == FLIPPITY210_ANIM_SLIDE_FROM_TOP ||
+      anim == FLIPPITY210_ANIM_SLIDE_FROM_TOP_FORCED
+  ) {
+
+    bool force =
+      (anim == FLIPPITY210_ANIM_SLIDE_FROM_TOP_FORCED);
+
     for (int row = 0; row < rowCount; row++) {
-      updateRow(row, false);
-    }
-  }
-  else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_FROM_TOP_FORCED) {
-    for (int row = 0; row < rowCount; row++) {
-      updateRow(row, true);
+      updateRow(row, force);
     }
   }
 #endif
+
 #ifdef ENABLE_ANIMATION_SLIDE_FROM_BOTTOM
-  else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM) {
+  else if (
+      anim == FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM ||
+      anim == FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM_FORCED
+  ) {
+
+    bool force =
+      (anim == FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM_FORCED);
+
     for (int row = 0; row < rowCount; row++) {
-      updateRow(rowCount - 1 - row, false);
-    }
-  }
-  else if (displayData[3] == FLIPPITY210_ANIM_SLIDE_FROM_BOTTOM_FORCED) {
-    for (int row = 0; row < rowCount; row++) {
-      updateRow(rowCount - 1 - row, true);
+      updateRow(rowCount - 1 - row, force);
     }
   }
 #endif
+
 #ifdef ENABLE_ANIMATION_DISSOLVE
-  else if (displayData[3] == FLIPPITY210_ANIM_DISSOLVE) {
+  else if (anim == FLIPPITY210_ANIM_DISSOLVE) {
     dissolveDots();
   }
 #endif
 
-  else { // default animation FLIPPITY210_ANIM_SLIDE_RIGHT
-    for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
-      dotsSelectDisplay(dispNumber);
-      for (int col = 0; col < columnCount; col++) {
-        updateCol(dispNumber, col, false);
-      }
-    }
-  }
+  for (int disp = 0; disp < displaysCount; disp++) {
+    dotsSelectDisplay(disp);
 
-  for (int dispNumber = 0; dispNumber < displaysCount; dispNumber++) {
-    dotsSelectDisplay(dispNumber);
-    for (int i = 0; i < rowCount; i++) {
-      dotsActive[dispNumber][i] = dotsBuffer[dispNumber][i];
+    for (int row = 0; row < rowCount; row++) {
+      dotsActive[disp][row] = dotsBuffer[disp][row];
     }
   }
 
