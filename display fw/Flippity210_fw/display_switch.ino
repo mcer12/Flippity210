@@ -1,25 +1,13 @@
-
-void toggleDaisyChainCount() {
+void toggleDaisyChainCount()
+{
+    bool daisyA = digitalRead(DAISY_A);
+    bool daisyB = digitalRead(DAISY_B);
 
 #ifdef USE_SERIAL
-  Serial.print(digitalRead(DAISY_A));
-  Serial.print(" ");
-  Serial.println(digitalRead(DAISY_B));
+    Serial.print(daisyA);
+    Serial.print(" ");
+    Serial.println(daisyB);
 #endif
 
-  bool daisyA = digitalRead(DAISY_A);
-  bool daisyB = digitalRead(DAISY_B);
-
-  if (daisyA && daisyB) {
-    displaysCount = 1;
-  }
-  else if (daisyA && !daisyB) {
-    displaysCount = 2;
-  }
-  else if (!daisyA && daisyB) {
-    displaysCount = 3;
-  }
-  else if (!daisyA && !daisyB) {
-    displaysCount = 4;
-  }
+    displaysCount = 4 - ((daisyA << 1) | daisyB);
 }
