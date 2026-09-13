@@ -1,12 +1,13 @@
 # Flippity210
-Control board and library for BUSE BS210 flip dot displays. Might also work with BS110 (non-led version)
+Control board and library for BUSE BS210 flip dot displays. It also works with older BS110 (non-led) variant, just bear in mind that BS110 is a different form factor so it won't fit in the 3D printed enclosure!
 
-![alt text](https://github.com/mcer12/Flippity210/raw/refs/heads/master/resources/wall_clock.webp)  
+https://github.com/user-attachments/assets/d0198746-1350-4b9b-a5e5-f4e7e80c436d
 
 - This project enables you to control these beautiful flip-dot displays via I2C the same way you use I2C oled displays for example. 
 - The library supports Adafruit GFX which enables you to draw fonts and geometry.
-- Custom PCB and schematic is provided in the repository and replaces the original control board.
-- The board has pin header to connect ESP-01 / ESP-1 directly
+- Custom PCB and schematic is provided in the repository and replaces the original control board (it is not the same form factor!).
+- The board has two MCUs - STM32 to control the display itself and provide a simple I2C interface to communicate with, and optional ESP8266 to control the STM32 via I2C on high level.
+- I2C header if you don't want o use built-in ESP8266 and/or want to add other I2C devices.
 - Supports up to 4 daisy-chained displays with the default firmware, up to 8 in theory with SW changes.
 
 ## What's needed to make it work:
@@ -17,7 +18,13 @@ Control board and library for BUSE BS210 flip dot displays. Might also work with
 - See project wiki https://github.com/mcer12/Flippity210/wiki
 
 ## Status
-- PCB: Finished (V2.1)
+- PCB: Finished (V3), V3 version has integrated ESP8266 so it doesn't require the daughter board anymore.
 - Library: Finished
-- Added ESP8266 daugher board for easy flashing and development even when installed in a 3D printed enclosure
 - 3D printed enclosure: https://www.printables.com/model/468031-flippity210-flip-dot-display-case
+
+![alt text](https://github.com/mcer12/Flippity210/raw/refs/heads/master/resources/wall_clock.webp)  
+
+<img width="1920" height="898" alt="Photo 29 03 2025, 18 18 272" src="https://github.com/user-attachments/assets/5c9d3742-14c8-4529-b140-a83eb6b31b32" />
+
+
+
